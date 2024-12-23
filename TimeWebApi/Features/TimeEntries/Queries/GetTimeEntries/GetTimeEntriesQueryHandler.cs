@@ -29,7 +29,8 @@ SELECT
     ""HoursWorked"",
     ""Id""
 FROM ""TimeEntries""
-WHERE ""EmployeeId"" = @EmployeeId",
+WHERE ""EmployeeId"" = @EmployeeId
+ORDER BY ""Id"" ASC",
             cancellationToken: cancellationToken,
             parameters: new { query.EmployeeId }));
 }

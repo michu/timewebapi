@@ -25,6 +25,7 @@ SELECT
     ""Id"",
     ""LastName""
 FROM ""Employees""
-WHERE ""IsDeleted"" = false",
+WHERE ""IsDeleted"" = false
+ORDER BY ""Id"" ASC",
             cancellationToken: cancellationToken));
 }
