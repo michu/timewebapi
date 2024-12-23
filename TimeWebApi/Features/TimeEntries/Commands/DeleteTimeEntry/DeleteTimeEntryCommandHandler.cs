@@ -18,6 +18,12 @@ public sealed class DeleteTimeEntryCommandHandler : ICommandHandler<DeleteTimeEn
     public async Task<Unit> Handle(DeleteTimeEntryCommand command, CancellationToken cancellationToken)
     {
         await _connection.ThrowIfEmployeeDoesNotExist(command.EmployeeId, cancellationToken);
+
+        if (!await _connection.ExistsTimeEntry(command.Id, cancellationToken))
+        {
+            return Unit.Value;
+        }
+
         await _connection.ThrowIfTimeEntryIsNotOwnedByEmployee(command.Id, command.EmployeeId, cancellationToken);
 
         await DeleteTimeEntry(command, cancellationToken);

@@ -18,7 +18,7 @@ public sealed class UpdateEmployeeCommandHandler : ICommandHandler<UpdateEmploye
     public async Task<Unit> Handle(UpdateEmployeeCommand command, CancellationToken cancellationToken)
     {
         await _connection.ThrowIfEmployeeDoesNotExist(command.Id, cancellationToken);
-        await _connection.ThrowIfEmployeeWithGivenEmailAlreadyExists(command.Email, cancellationToken);
+        await _connection.ThrowIfEmployeeWithGivenEmailAlreadyExists(command.Email, command.Id, cancellationToken);
 
         await UpdateEmployee(command, cancellationToken);
 

@@ -43,7 +43,7 @@ public sealed class FeatureExceptionHandler : IExceptionHandler
         {
             ConflictException => "https://tools.ietf.org/html/rfc9110#section-15.5.10",
             NotFoundException => "https://tools.ietf.org/html/rfc9110#section-15.5.5",
-            ValidationException => "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+            ValidationException => "https://tools.ietf.org/html/rfc9110#section-15.5.21",
             _ => "https://tools.ietf.org/html/rfc9110#section-15.6.1"
         };
 
@@ -65,7 +65,7 @@ public sealed class FeatureExceptionHandler : IExceptionHandler
         }
 
 #if DEBUG
-        problemDetails.Extensions["exception"] = exception;
+        problemDetails.Extensions["exception"] = exception.ToString();
         problemDetails.Extensions["traceId"] = Activity.Current?.Id ?? context.TraceIdentifier;
 #endif
 

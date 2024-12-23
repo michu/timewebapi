@@ -16,6 +16,17 @@ WHERE ""Email"" = @Email
         cancellationToken: cancellationToken
     ));
 
+    public static async Task<bool> ExistsEmployeeByEmail(this NpgsqlConnection connection, string email, int excludeId, CancellationToken cancellationToken)
+        => await connection.QueryFirstOrDefaultAsync<bool>(new CommandDefinition(@"
+SELECT 1
+FROM ""Employees""
+WHERE ""Email"" = @Email
+    AND ""Id"" <> @Id
+    AND ""IsDeleted"" = false",
+        parameters: new { Email = email, Id = excludeId },
+        cancellationToken: cancellationToken
+    ));
+
     public static async Task<bool> ExistsEmployee(this NpgsqlConnection connection, int id, CancellationToken cancellationToken)
         => await connection.QueryFirstOrDefaultAsync<bool>(new CommandDefinition(@"
 SELECT 1
@@ -39,6 +50,16 @@ WHERE ""Id"" = @Id
     public static async Task ThrowIfEmployeeWithGivenEmailAlreadyExists(this NpgsqlConnection connection, string email, CancellationToken cancellationToken)
     {
         var exists = await connection.ExistsEmployeeByEmail(email, cancellationToken);
+
+        if (exists)
+        {
+            throw new ConflictException("Employee with given email already exists.");
+        }
+    }
+
+    public static async Task ThrowIfEmployeeWithGivenEmailAlreadyExists(this NpgsqlConnection connection, string email, int excludeId, CancellationToken cancellationToken)
+    {
+        var exists = await connection.ExistsEmployeeByEmail(email, excludeId, cancellationToken);
 
         if (exists)
         {

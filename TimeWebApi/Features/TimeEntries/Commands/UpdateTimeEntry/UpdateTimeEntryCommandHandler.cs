@@ -18,7 +18,9 @@ public sealed class UpdateTimeEntryCommandHandler : ICommandHandler<UpdateTimeEn
     public async Task<Unit> Handle(UpdateTimeEntryCommand command, CancellationToken cancellationToken)
     {
         await _connection.ThrowIfEmployeeDoesNotExist(command.EmployeeId, cancellationToken);
+        await _connection.ThrowIfTimeEntryDoesNotExist(command.Id, cancellationToken);
         await _connection.ThrowIfTimeEntryIsNotOwnedByEmployee(command.Id, command.EmployeeId, cancellationToken);
+        await _connection.ThrowIfTimeEntryWithGivenEmployeeAndDateExists(command.EmployeeId, command.Date, command.Id, cancellationToken);
 
         await UpdateEmployee(command, cancellationToken);
 

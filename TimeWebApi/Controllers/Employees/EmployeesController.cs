@@ -94,7 +94,7 @@ public sealed class EmployeesController : ControllerBase
     /// </summary>
     /// <param name="id">The id of employee</param>
     /// <param name="request">The employee data</param>
-    [Authorize(Roles = StaticData.Roles.Admin)]
+    [Authorize(Roles = $"{StaticData.Roles.Admin},{StaticData.Roles.Employee}")]
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
