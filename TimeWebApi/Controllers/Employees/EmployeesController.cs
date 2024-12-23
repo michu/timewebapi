@@ -29,9 +29,11 @@ public sealed class EmployeesController : ControllerBase
     [Authorize(Roles = StaticData.Roles.Admin)]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult> Create([FromBody] CreateEmployeeRequest request)
     {
         var employeeId = await _mediator.Send(request.ToCommand());
@@ -97,10 +99,12 @@ public sealed class EmployeesController : ControllerBase
     [Authorize(Roles = $"{StaticData.Roles.Admin},{StaticData.Roles.Employee}")]
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult> Update(int id, [FromBody] UpdateEmployeeRequest request)
     {
         await _mediator.Send(request.ToCommand(id));

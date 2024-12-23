@@ -29,10 +29,12 @@ public sealed class TimeEntriesController : ControllerBase
     [Authorize(Roles = $"{StaticData.Roles.Admin},{StaticData.Roles.Employee}")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult> Create(int id, [FromBody] CreateTimeEntryRequest request)
     {
         await _mediator.Send(request.ToCommand(id));
@@ -85,10 +87,12 @@ public sealed class TimeEntriesController : ControllerBase
     [Authorize(Roles = $"{StaticData.Roles.Admin},{StaticData.Roles.Employee}")]
     [HttpPut("{timeEntryId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult> Update(int id, int timeEntryId, [FromBody] UpdateTimeEntryRequest request)
     {
         await _mediator.Send(request.ToCommand(id, timeEntryId));
