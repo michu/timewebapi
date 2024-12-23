@@ -1,0 +1,26 @@
+networks:
+  app_network_test:
+    driver: bridge
+
+services:
+  app_db_test:
+    image: postgres-en-us-utf8
+    build:
+      context: .
+      dockerfile: postgres-en_US-UTF8-config
+    container_name: app_db_test
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin1 # should be stronger :)
+      - POSTGRES_DB=TimeWebApiDb
+      - POSTGRES_INITDB_ARGS='--locale=en_US.UTF8'
+    networks:
+      - app_network_test
+    ports:
+      - "5435:5432"
+    restart: always
+    volumes:
+      - app_data_test:/var/lib/postgresql/data
+
+volumes:
+  app_data_test:

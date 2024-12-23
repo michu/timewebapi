@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeWebApi", "TimeWebApi\TimeWebApi.csproj", "{EA9D5D8D-E880-492A-9F85-3C35E3DEA474}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{CAC08040-419C-4F92-A500-2BA55F4EAFCE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9EE7834A-7E33-47A8-BC1B-7FBD9BC2AEF2}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeWebApi.UnitTests", "TimeWebApi.UnitTests\TimeWebApi.UnitTests.csproj", "{168E26D6-1C1D-4022-86AF-E2939A57DCCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeWebApi.IntegrationTests", "TimeWebApi.IntegrationTests\TimeWebApi.IntegrationTests.csproj", "{89743CAC-7B69-4096-959E-4BE6B6379F02}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA9D5D8D-E880-492A-9F85-3C35E3DEA474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA9D5D8D-E880-492A-9F85-3C35E3DEA474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA9D5D8D-E880-492A-9F85-3C35E3DEA474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA9D5D8D-E880-492A-9F85-3C35E3DEA474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAC08040-419C-4F92-A500-2BA55F4EAFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC08040-419C-4F92-A500-2BA55F4EAFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC08040-419C-4F92-A500-2BA55F4EAFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC08040-419C-4F92-A500-2BA55F4EAFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{168E26D6-1C1D-4022-86AF-E2939A57DCCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{168E26D6-1C1D-4022-86AF-E2939A57DCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{168E26D6-1C1D-4022-86AF-E2939A57DCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{168E26D6-1C1D-4022-86AF-E2939A57DCCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89743CAC-7B69-4096-959E-4BE6B6379F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89743CAC-7B69-4096-959E-4BE6B6379F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89743CAC-7B69-4096-959E-4BE6B6379F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89743CAC-7B69-4096-959E-4BE6B6379F02}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

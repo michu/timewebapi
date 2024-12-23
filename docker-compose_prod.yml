@@ -1,0 +1,44 @@
+networks:
+  app_network_prod:
+    driver: bridge
+
+services:
+  timewebapi:
+    image: ${DOCKER_REGISTRY-}timewebapi
+    networks:
+      - app_network_prod
+    build:
+      context: .
+      dockerfile: TimeWebApi/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  app_db_prod:
+    image: postgres-en-us-utf8
+    build:
+      context: .
+      dockerfile: postgres-en_US-UTF8-config
+    container_name: app_db_prod
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin1 # Should be stronger :)
+      - POSTGRES_DB=TimeWebApiDb
+      - POSTGRES_INITDB_ARGS='--locale=en_US.UTF8'
+    networks:
+      - app_network_prod
+    ports:
+      - "5434:5432"
+    restart: always
+    volumes:
+      - app_data_prod:/var/lib/postgresql/data
+
+volumes:
+  app_data_prod:
