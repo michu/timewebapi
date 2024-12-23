@@ -24,7 +24,7 @@ public sealed class TransactionPipelineBehaviour<TRequest, TResponse> : IPipelin
         var requestName = typeof(TRequest).Name;
         var response = default(TResponse);
 
-        using var transaction = await _connection.BeginTransactionAsync(IsolationLevel.ReadUncommitted, cancellationToken);
+        using var transaction = await _connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
         _logger.LogInformation("Begin transaction for request: {RequestName} at {DateTime}", requestName, DateTime.UtcNow.ToString(StaticData.DateTimeFormats.UtcIso));
 
