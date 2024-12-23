@@ -28,6 +28,9 @@ TODO
 
 # Run integration tests
 
+Warning: Please ensure that you don't have your own services running on 5435 port.
+If yes then you have to adjust docker-compose_test.yml and appsettings.json files.
+
 On first console:
 
 `cd timewebapi`
@@ -35,9 +38,6 @@ On first console:
 `docker compose -f docker-compose_test.yml up`
 
 On second console:
-
-Warning: Please ensure that you don't have your own services running on 5435 port.
-If yes then you have to adjust docker-compose_test.yml and appsettings.json files.
 
 `cd timewebapi`
 
