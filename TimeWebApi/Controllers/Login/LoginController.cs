@@ -28,7 +28,9 @@ public sealed class LoginController : ControllerBase
     /// <returns>The bearer token</returns>
     [HttpPost]
     [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> Post([FromBody] LoginRequest request)
     {
         if (request.Email == "admin@example.com")
