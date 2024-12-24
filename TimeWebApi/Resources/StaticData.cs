@@ -2,6 +2,11 @@
 
 public static class StaticData
 {
+    public static class Claims
+    {
+        public const string EmployeeId = "EmployeeId";
+    }
+
     public static class ConnectionStrings
     {
         public const string DefaultConnectionString = "TimeWebApi";

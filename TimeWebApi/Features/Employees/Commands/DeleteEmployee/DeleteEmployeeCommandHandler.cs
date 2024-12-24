@@ -1,32 +1,22 @@
 ﻿namespace TimeWebApi.Features.Employees.Commands.DeleteEmployee;
 
-using Dapper;
 using MediatR;
-using Npgsql;
+using TimeWebApi.DAL.Employees.Interfaces;
 using TimeWebApi.Features.Common.Messaging;
 
 public sealed class DeleteEmployeeCommandHandler : ICommandHandler<DeleteEmployeeCommand, Unit>
 {
-    private readonly NpgsqlConnection _connection;
+    private readonly IEmployeeRepository _employeeRepository;
 
-    public DeleteEmployeeCommandHandler(NpgsqlConnection connection)
+    public DeleteEmployeeCommandHandler(IEmployeeRepository employeeRepository)
     {
-        _connection = connection;
+        _employeeRepository = employeeRepository;
     }
 
     public async Task<Unit> Handle(DeleteEmployeeCommand command, CancellationToken cancellationToken)
     {
-        await SoftDeleteEmployee(command, cancellationToken);
+        await _employeeRepository.Delete(command.Id, cancellationToken);
 
         return Unit.Value;
     }
-
-    private async Task SoftDeleteEmployee(DeleteEmployeeCommand command, CancellationToken cancellationToken)
-        => await _connection.ExecuteAsync(new CommandDefinition(@"
-UPDATE ""Employees""
-SET ""IsDeleted"" = true
-WHERE ""Id"" = @Id",
-            parameters: new { command.Id },
-            cancellationToken: cancellationToken
-        ));
 }

@@ -1,42 +1,29 @@
 ﻿namespace TimeWebApi.Features.Employees.Queries.GetEmployee;
 
-using Dapper;
-using Npgsql;
+using TimeWebApi.DAL.Employees.Interfaces;
 using TimeWebApi.Features.Common.Exceptions;
 using TimeWebApi.Features.Common.Messaging;
+using TimeWebApi.Features.Employees.Mappings;
 using TimeWebApi.Features.Employees.Models;
 
 public sealed class GetEmployeeQueryHandler : IQueryHandler<GetEmployeeQuery, EmployeeDto>
 {
-    private readonly NpgsqlConnection _connection;
+    private readonly IEmployeeRepository _repository;
 
-    public GetEmployeeQueryHandler(NpgsqlConnection connection)
+    public GetEmployeeQueryHandler(IEmployeeRepository repository)
     {
-        _connection = connection;
+        _repository = repository;
     }
 
     public async Task<EmployeeDto> Handle(GetEmployeeQuery query, CancellationToken cancellationToken)
     {
-        var employee = await GetEmployee(query, cancellationToken);
+        var employee = await _repository.GetById(query.Id, cancellationToken);
 
-        if (employee is null)
+        if (employee == null)
         {
             throw new NotFoundException("Employee with given id does not exist.");
         }
 
-        return employee;
+        return employee.ToDto();
     }
-
-    private async Task<EmployeeDto?> GetEmployee(GetEmployeeQuery query, CancellationToken cancellationToken)
-        => await _connection.QueryFirstOrDefaultAsync<EmployeeDto>(new CommandDefinition(@"
-SELECT
-    ""Email"",
-    ""FirstName"",
-    ""Id"",
-    ""LastName""
-FROM ""Employees""
-WHERE ""Id"" = @Id
-    AND ""IsDeleted"" = false",
-            cancellationToken: cancellationToken,
-            parameters: new { query.Id }));
 }

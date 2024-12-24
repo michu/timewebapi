@@ -59,7 +59,7 @@ public sealed class FeatureExceptionHandler : IExceptionHandler
             Type = GetType(exception),
         };
 
-        if (exception.Errors is not null)
+        if (exception.Errors != null)
         {
             problemDetails.Extensions["errors"] = exception.Errors;
         }

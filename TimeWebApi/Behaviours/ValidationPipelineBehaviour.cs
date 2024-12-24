@@ -4,10 +4,9 @@ using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using System.Collections.Generic;
-using TimeWebApi.Features.Common.Messaging;
 
 public sealed class ValidationPipelineBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : class, ICommand<TResponse>
+    where TRequest : class, IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 

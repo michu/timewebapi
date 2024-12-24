@@ -24,6 +24,7 @@ public static class Fixture
 
         services.AddNpgsql(connectionString);
         services.AddFluentMigration(connectionString);
+        services.AddRepositories();
         services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         services.AddMediator();
 

@@ -1,42 +1,41 @@
 ﻿namespace TimeWebApi.Features.TimeEntries.Commands.DeleteTimeEntry;
 
-using Dapper;
 using MediatR;
-using Npgsql;
+using TimeWebApi.DAL.Employees.Interfaces;
+using TimeWebApi.DAL.TimeEntries.Interfaces;
+using TimeWebApi.Features.Common.Exceptions;
 using TimeWebApi.Features.Common.Extensions;
 using TimeWebApi.Features.Common.Messaging;
 
 public sealed class DeleteTimeEntryCommandHandler : ICommandHandler<DeleteTimeEntryCommand, Unit>
 {
-    private readonly NpgsqlConnection _connection;
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly ITimeEntryRepository _timeEntryRepository;
 
-    public DeleteTimeEntryCommandHandler(NpgsqlConnection connection)
+    public DeleteTimeEntryCommandHandler(IEmployeeRepository employeeRepository, ITimeEntryRepository timeEntryRepository)
     {
-        _connection = connection;
+        _employeeRepository = employeeRepository;
+        _timeEntryRepository = timeEntryRepository;
     }
 
     public async Task<Unit> Handle(DeleteTimeEntryCommand command, CancellationToken cancellationToken)
     {
-        await _connection.ThrowIfEmployeeDoesNotExist(command.EmployeeId, cancellationToken);
+        await _employeeRepository.ThrowIfDoesNotExist(command.EmployeeId, cancellationToken);
 
-        if (!await _connection.ExistsTimeEntry(command.Id, cancellationToken))
+        var timeEntry = await _timeEntryRepository.GetById(command.Id, cancellationToken);
+
+        if (timeEntry == null)
         {
             return Unit.Value;
         }
 
-        await _connection.ThrowIfTimeEntryIsNotOwnedByEmployee(command.Id, command.EmployeeId, cancellationToken);
+        if (timeEntry.EmployeeId != command.EmployeeId)
+        {
+            throw new NotFoundException("Time Entry with given id is not owned by Employee with given employee-id.");
+        }
 
-        await DeleteTimeEntry(command, cancellationToken);
+        await _timeEntryRepository.Delete(command.Id, cancellationToken);
 
         return Unit.Value;
     }
-
-    private async Task DeleteTimeEntry(DeleteTimeEntryCommand command, CancellationToken cancellationToken)
-        => await _connection.ExecuteAsync(new CommandDefinition(@"
-DELETE FROM ""TimeEntries""
-WHERE ""Id"" = @Id",
-            parameters: new { command.Id },
-            cancellationToken: cancellationToken
-        ));
-
 }

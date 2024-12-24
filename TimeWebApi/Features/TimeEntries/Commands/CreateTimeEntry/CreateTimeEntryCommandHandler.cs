@@ -1,42 +1,26 @@
 ﻿namespace TimeWebApi.Features.TimeEntries.Commands.CreateTimeEntry;
 
-using Dapper;
-using MediatR;
-using Npgsql;
+using TimeWebApi.DAL.Employees.Interfaces;
+using TimeWebApi.DAL.TimeEntries.Interfaces;
 using TimeWebApi.Features.Common.Extensions;
 using TimeWebApi.Features.Common.Messaging;
 
-public sealed class CreateTimeEntryCommandHandler : ICommandHandler<CreateTimeEntryCommand, Unit>
+public sealed class CreateTimeEntryCommandHandler : ICommandHandler<CreateTimeEntryCommand, int>
 {
-    private readonly NpgsqlConnection _connection;
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly ITimeEntryRepository _timeEntryRepository;
 
-    public CreateTimeEntryCommandHandler(NpgsqlConnection connection)
+    public CreateTimeEntryCommandHandler(IEmployeeRepository employeeRepository, ITimeEntryRepository repository)
     {
-        _connection = connection;
+        _employeeRepository = employeeRepository;
+        _timeEntryRepository = repository;
     }
 
-    public async Task<Unit> Handle(CreateTimeEntryCommand command, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateTimeEntryCommand command, CancellationToken cancellationToken)
     {
-        await _connection.ThrowIfEmployeeDoesNotExist(command.EmployeeId, cancellationToken);
-        await _connection.ThrowIfTimeEntryWithGivenEmployeeAndDateExists(command.EmployeeId, command.Date, cancellationToken);
+        await _employeeRepository.ThrowIfDoesNotExist(command.EmployeeId, cancellationToken);
+        await _timeEntryRepository.ThrowIfExistsByEmployeeIdAndDate(command.EmployeeId, command.Date, cancellationToken);
 
-        await CreateTimeEntry(command, cancellationToken);
-
-        return Unit.Value;
+        return await _timeEntryRepository.Add(command.ToEntity(), cancellationToken);
     }
-
-    private async Task CreateTimeEntry(CreateTimeEntryCommand command, CancellationToken cancellationToken)
-        => await _connection.ExecuteScalarAsync(new CommandDefinition(@"
-INSERT INTO ""TimeEntries"" (
-    ""Date"",
-    ""EmployeeId"",
-    ""HoursWorked""
-) VALUES (
-    @Date,
-    @EmployeeId,
-    @HoursWorked
-)",
-            parameters: new { command.Date, command.EmployeeId, command.HoursWorked },
-            cancellationToken: cancellationToken
-        ));
 }

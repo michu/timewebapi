@@ -1,36 +1,28 @@
 ﻿namespace TimeWebApi.Features.TimeEntries.Queries.GetTimeEntries;
 
-using Dapper;
-using Npgsql;
+using TimeWebApi.DAL.Employees.Interfaces;
+using TimeWebApi.DAL.TimeEntries.Interfaces;
 using TimeWebApi.Features.Common.Extensions;
 using TimeWebApi.Features.Common.Messaging;
+using TimeWebApi.Features.TimeEntries.Mappings;
 using TimeWebApi.Features.TimeEntries.Models;
 
 public sealed class GetTimeEntriesQueryHandler : IQueryHandler<GetTimeEntriesQuery, IEnumerable<TimeEntryDto>>
 {
-    private readonly NpgsqlConnection _connection;
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly ITimeEntryRepository _timeEntryRepository;
 
-    public GetTimeEntriesQueryHandler(NpgsqlConnection connection)
+    public GetTimeEntriesQueryHandler(IEmployeeRepository employeeRepository, ITimeEntryRepository timeEntryRepository)
     {
-        _connection = connection;
+        _employeeRepository = employeeRepository;
+        _timeEntryRepository = timeEntryRepository;
     }
 
     public async Task<IEnumerable<TimeEntryDto>> Handle(GetTimeEntriesQuery query, CancellationToken cancellationToken)
     {
-        await _connection.ThrowIfEmployeeDoesNotExist(query.EmployeeId, cancellationToken);
+        await _employeeRepository.ThrowIfDoesNotExist(query.EmployeeId, cancellationToken);
 
-        return await GetTimeEntries(query, cancellationToken);
+        return (await _timeEntryRepository.GetByEmployeeId(query.EmployeeId, cancellationToken))
+            .ToDtos();
     }
-
-    private async Task<IEnumerable<TimeEntryDto>> GetTimeEntries(GetTimeEntriesQuery query, CancellationToken cancellationToken)
-        => await _connection.QueryAsync<TimeEntryDto>(new CommandDefinition(@"
-SELECT
-    ""Date"",
-    ""HoursWorked"",
-    ""Id""
-FROM ""TimeEntries""
-WHERE ""EmployeeId"" = @EmployeeId
-ORDER BY ""Id"" ASC",
-            cancellationToken: cancellationToken,
-            parameters: new { query.EmployeeId }));
 }

@@ -1,6 +1,4 @@
-﻿using TimeWebApi;
-
-namespace TimeWebApi;
+﻿namespace TimeWebApi;
 
 using FluentMigrator.Runner;
 using MediatR;
@@ -8,9 +6,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Npgsql;
+using System.Data.Common;
 using System.Text;
 using TimeWebApi.Auth;
 using TimeWebApi.Behaviours;
+using TimeWebApi.DAL.Employees;
+using TimeWebApi.DAL.Employees.Interfaces;
+using TimeWebApi.DAL.TimeEntries;
+using TimeWebApi.DAL.TimeEntries.Interfaces;
 using TimeWebApi.ExceptionHandlers;
 
 public static class ServiceCollectionExtensions
@@ -55,8 +58,8 @@ public static class ServiceCollectionExtensions
     public static void AddMediator(this IServiceCollection services)
     {
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehaviour<,>));
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionPipelineBehaviour<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehaviour<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionPipelineBehaviour<,>));
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
     }
@@ -69,6 +72,14 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped(serviceProvider => serviceProvider.GetRequiredService<NpgsqlDataSource>()
             .OpenConnection());
+
+        services.AddScoped<DbConnection>(serviceProvider => serviceProvider.GetRequiredService<NpgsqlConnection>());
+    }
+
+    public static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
     }
 
     public static void AddSwagger(this IServiceCollection services)

@@ -1,9 +1,8 @@
 ﻿namespace TimeWebApi.Features.TimeEntries.Commands.CreateTimeEntry;
 
-using MediatR;
 using TimeWebApi.Features.Common.Messaging;
 
-public sealed class CreateTimeEntryCommand : ITransactionCommand<Unit>
+public sealed class CreateTimeEntryCommand : ITransactionCommand<int>
 {
     public required DateOnly Date { get; set; }
     public required int EmployeeId { get; set; }

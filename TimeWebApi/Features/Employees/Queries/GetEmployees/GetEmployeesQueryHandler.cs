@@ -1,31 +1,20 @@
 ﻿namespace TimeWebApi.Features.Employees.Queries.GetEmployees;
 
-using Dapper;
-using Npgsql;
+using TimeWebApi.DAL.Employees.Interfaces;
 using TimeWebApi.Features.Common.Messaging;
+using TimeWebApi.Features.Employees.Mappings;
 using TimeWebApi.Features.Employees.Models;
 
 public sealed class GetEmployeesQueryHandler : IQueryHandler<GetEmployeesQuery, IEnumerable<EmployeeDto>>
 {
-    private readonly NpgsqlConnection _connection;
+    private readonly IEmployeeRepository _repository;
 
-    public GetEmployeesQueryHandler(NpgsqlConnection connection)
+    public GetEmployeesQueryHandler(IEmployeeRepository repository)
     {
-        _connection = connection;
+        _repository = repository;
     }
 
     public async Task<IEnumerable<EmployeeDto>> Handle(GetEmployeesQuery query, CancellationToken cancellationToken)
-        => await GetEmployees(query, cancellationToken);
-
-    private async Task<IEnumerable<EmployeeDto>> GetEmployees(GetEmployeesQuery query, CancellationToken cancellationToken)
-        => await _connection.QueryAsync<EmployeeDto>(new CommandDefinition(@"
-SELECT
-    ""Email"",
-    ""FirstName"",
-    ""Id"",
-    ""LastName""
-FROM ""Employees""
-WHERE ""IsDeleted"" = false
-ORDER BY ""Id"" ASC",
-            cancellationToken: cancellationToken));
+        => (await _repository.GetAll(cancellationToken))
+            .ToDtos();
 }

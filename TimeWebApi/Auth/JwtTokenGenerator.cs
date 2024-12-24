@@ -16,7 +16,7 @@ public sealed class JwtTokenGenerator
         _configuration = configuration;
     }
 
-    public string Generate(string userName, IEnumerable<string> userRoles)
+    public string Generate(string email, IEnumerable<string> roles, IReadOnlyDictionary<string, string>? extraClaims = null)
     {
         var jwtIssuer = _configuration.GetSection(StaticData.ConfigurationOptions.JwtIssuer).Get<string>()!;
         var jwtKey = _configuration.GetSection(StaticData.ConfigurationOptions.JwtKey).Get<string>()!;
@@ -26,8 +26,13 @@ public sealed class JwtTokenGenerator
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var tokenHandler = new JwtSecurityTokenHandler();
 
-        claims.AddClaim(new Claim(ClaimTypes.Name, userName));
-        claims.AddClaims(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+        claims.AddClaim(new Claim(ClaimTypes.Email, email));
+        claims.AddClaims(roles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+
+        if (extraClaims != null)
+        {
+            claims.AddClaims(extraClaims.Select(kvp => new Claim(kvp.Key, kvp.Value)));
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

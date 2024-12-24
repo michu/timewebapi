@@ -1,18 +1,15 @@
 ﻿namespace TimeWebApi.Middlewares;
 
-using Dapper;
-using Npgsql;
+using System.Security.Claims;
 using TimeWebApi.Exceptions;
 using TimeWebApi.Resources;
 
 public sealed class EmployeeBasedAccessMiddleware
 {
-    private readonly NpgsqlDataSource _dataSource;
     private readonly RequestDelegate _next;
 
-    public EmployeeBasedAccessMiddleware(NpgsqlDataSource dataSource, RequestDelegate next)
+    public EmployeeBasedAccessMiddleware(RequestDelegate next)
     {
-        _dataSource = dataSource;
         _next = next;
     }
 
@@ -48,19 +45,16 @@ public sealed class EmployeeBasedAccessMiddleware
             return;
         }
 
-        using var connection = await _dataSource.OpenConnectionAsync();
+        var claimsIdentity = context.User.Identity as ClaimsIdentity;
 
-        var employeeIdByEmail = await (context.User.Identity?.Name is not null
-            ? connection.QueryFirstOrDefaultAsync<int?>(new CommandDefinition(@"
-SELECT ""Id""
-FROM ""Employees""
-WHERE ""Email"" = @Email
-AND ""IsDeleted"" = false",
-    parameters: new { Email = context.User.Identity.Name }
-))
-            : Task.FromResult<int?>(null));
+        if (claimsIdentity == null)
+        {
+            throw new ForbiddenException("Access to resource is not granted for currently logged in user.");
+        }
 
-        if (employeeIdByResourceInt != employeeIdByEmail)
+        var claimsEmployeeId = claimsIdentity.Claims.FirstOrDefault(claim => claim.Type == StaticData.Claims.EmployeeId);
+
+        if (claimsEmployeeId == null || claimsEmployeeId.Value != employeeIdByResourceInt.ToString())
         {
             throw new ForbiddenException("Access to resource is not granted for currently logged in user.");
         }

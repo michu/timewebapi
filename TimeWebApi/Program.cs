@@ -30,6 +30,7 @@ public class Program
         builder.Services.AddAuthentication(jwtIssuer, jwtKey);
         builder.Services.AddNpgsql(connectionString);
         builder.Services.AddFluentMigration(connectionString);
+        builder.Services.AddRepositories();
         builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         builder.Services.AddMediator();
 

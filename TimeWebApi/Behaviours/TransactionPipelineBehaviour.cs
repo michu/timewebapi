@@ -1,18 +1,18 @@
 ﻿namespace TimeWebApi.Behaviours;
 
 using MediatR;
-using Npgsql;
 using System.Data;
+using System.Data.Common;
 using TimeWebApi.Features.Common.Messaging;
 using TimeWebApi.Resources;
 
 public sealed class TransactionPipelineBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class, ITransactionCommand<TResponse>
 {
-    private readonly NpgsqlConnection _connection;
+    private readonly DbConnection _connection;
     private readonly ILogger<LoggingPipelineBehaviour<TRequest, TResponse>> _logger;
 
-    public TransactionPipelineBehaviour(NpgsqlConnection connection, ILogger<LoggingPipelineBehaviour<TRequest, TResponse>> logger)
+    public TransactionPipelineBehaviour(DbConnection connection, ILogger<LoggingPipelineBehaviour<TRequest, TResponse>> logger)
     {
         _connection = connection;
         _logger = logger;
