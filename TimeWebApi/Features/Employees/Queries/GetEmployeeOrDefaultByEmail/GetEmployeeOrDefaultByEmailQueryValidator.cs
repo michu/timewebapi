@@ -2,9 +2,9 @@
 
 using FluentValidation;
 
-public sealed class GetEmployeeOrDefaultByEmailValidator : AbstractValidator<GetEmployeeOrDefaultByEmailQuery>
+public sealed class GetEmployeeOrDefaultByEmailQueryValidator : AbstractValidator<GetEmployeeOrDefaultByEmailQuery>
 {
-    public GetEmployeeOrDefaultByEmailValidator()
+    public GetEmployeeOrDefaultByEmailQueryValidator()
     {
         RuleFor(query => query.Email)
             .NotEmpty()

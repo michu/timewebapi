@@ -7,11 +7,11 @@ using TimeWebApi.Features.Common.Messaging;
 using TimeWebApi.Features.Employees.Mappings;
 using TimeWebApi.Features.Employees.Models;
 
-public class GetEmployeeOrDefaultByEmailHandler : IQueryHandler<GetEmployeeOrDefaultByEmailQuery, EmployeeDto>
+public class GetEmployeeOrDefaultByEmailQueryHandler : IQueryHandler<GetEmployeeOrDefaultByEmailQuery, EmployeeDto?>
 {
     private readonly IEmployeeRepository _repository;
 
-    public GetEmployeeOrDefaultByEmailHandler(IEmployeeRepository repository)
+    public GetEmployeeOrDefaultByEmailQueryHandler(IEmployeeRepository repository)
     {
         _repository = repository;
     }
