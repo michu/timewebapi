@@ -21,6 +21,7 @@ public class Program
         // Configure logging.
         builder.Logging.ClearProviders();
         builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+        builder.Logging.AddConsole();
 
         // Add services to the container.
         var connectionString = builder.Configuration.GetConnectionString(StaticData.ConnectionStrings.DefaultConnectionString)!;
