@@ -22,6 +22,12 @@ public sealed class EmployeeBasedAccessMiddleware
             return;
         }
 
+        /* Warning:
+         * This is not a good solution for checking whether or not user has access to a specific resource.
+         * The main vulnerability is that it require each link to contain employee-id related route-value, when link has no such value then user will access the resource.
+         * I did it like that just for simplicity.
+         */
+
         var routeValues = context.Request.RouteValues;
 
         if (!routeValues.TryGetValue(StaticData.RouteValueKeys.EmployeeId, out var employeeIdByResource))
